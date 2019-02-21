@@ -48,7 +48,12 @@ class SwiftProvider extends Provider {
             lint_excution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${configPath}\n`
             lint_excution += 'fi'
             exec(lint_excution, (error, stdout, stderr) => {
-                const json = JSON.parse(stdout)
+                var json;
+                try {
+                    json = JSON.parse(stdout);
+                } catch (e) {
+                    json = [];
+                }
                 if (json.length == 0) {
                     console.log('SwiftLint校验已经通过~'.green);
                     messageLinter()

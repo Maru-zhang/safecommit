@@ -6,7 +6,7 @@ module.exports = function() {
     const msg = fs.readFileSync(msgPath, 'utf-8').trim();
     const commitRE = /^(revert: )?(feat|fix|polish|docs|style|refactor|perf|test|workflow|ci|chore|types|build)(\(.+\))?: .{1,50}/;
     if (!commitRE.test(msg)) {
-        var content = '=======> commit message不符合规范\n';
+        var content = '=======> commit message不符合规范,请参考一下规范\n';
         content += 'feat: 新功能（feature）\n';
         content += 'fix: 修补问题\n';
         content += 'docs: 更新文档\n';;
