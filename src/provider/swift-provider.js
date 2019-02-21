@@ -2,6 +2,8 @@ var fs = require('fs')
 var Provider = require('./provider');
 var color = require('colors');
 const { exec } = require('child_process');
+var execSync = require('child_process').execSync;
+var messageLinter = require('../provider/msglinter');
 
 class SwiftProvider extends Provider {
 
@@ -48,11 +50,11 @@ class SwiftProvider extends Provider {
         exec(lint_excution, (error, stdout, stderr) => {
             const json = JSON.parse(stdout)
             if (json.length == 0) {
-                console.log('恭喜你通过了SwiftLint校验!'.green);
+                messageLinter()
                 return;
             }
             const reducer = (result, x) => { return result + `${x["file"]}:${x["line"]}:${x["character"]}:${x["reason"]}\n` };
-            const content = json.reduce(reducer, '') + '发现以上违反行为，请修改后再提交~';
+            const content = json.reduce(reducer, '') + '您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide';
             console.log(content.red);
             process.exit(1);
         });

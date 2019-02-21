@@ -5,6 +5,7 @@ var colors = require('colors');
 var nconf = require('nconf');
 var inquirer = require('inquirer');
 var swiftProvider = require('./provider/swift-provider');
+var messageLinter = require('./provider/msglinter');
 
 const cwd = process.cwd();
 const home = process.env['HOME'];
