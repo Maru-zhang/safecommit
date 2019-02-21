@@ -146,8 +146,9 @@ class Worker {
         ]
     }
 
-    run_before_commit() {
-        this.excute_lint();
+    async run_before_commit() {
+        await this.excute_lint();
+        messageLinter()
     }
 
     async run() {

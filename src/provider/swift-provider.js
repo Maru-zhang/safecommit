@@ -2,7 +2,6 @@ var fs = require('fs')
 var Provider = require('./provider');
 var color = require('colors');
 const { exec } = require('child_process');
-var messageLinter = require('../provider/msglinter');
 
 class SwiftProvider extends Provider {
 
@@ -56,7 +55,6 @@ class SwiftProvider extends Provider {
                 }
                 if (json.length == 0) {
                     console.log('SwiftLint校验已经通过~'.green);
-                    messageLinter()
                     resolve();
                     return;
                 }
