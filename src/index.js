@@ -29,31 +29,33 @@ class Worker {
         fs.mkdirSync(global_sc_home, null);
     }
 
-    create_local_dir_ifneed(callback) {
-        if (fs.existsSync(sc_home)) {
-            nconf.argv().env().file({ file: sc_local_config });
-            callback()
-            return
-        }
-        fs.mkdirSync(sc_home, null);
-        nconf.argv().env().file({ file: sc_local_config });
-        var questions = [
-            {
-                type: 'rawlist',
-                name: 'language',
-                message: '请选择当前项目所使用的语言',
-                choices: this.providers.map(x => x.languageName())
+    create_local_dir_ifneed() {
+        return new Promise(resolve => {
+            if (fs.existsSync(sc_home)) {
+                nconf.argv().env().file({ file: sc_local_config });
+                resolve()
+                return
             }
-        ];
-        inquirer.prompt(questions).then(answers => {
-            nconf.set('language', answers['language'])
-            nconf.save()
-            callback()
+            fs.mkdirSync(sc_home, null);
+            nconf.argv().env().file({ file: sc_local_config });
+            var questions = [
+                {
+                    type: 'rawlist',
+                    name: 'language',
+                    message: '请选择当前项目所使用的语言',
+                    choices: this.providers.map(x => x.languageName())
+                }
+            ];
+            inquirer.prompt(questions).then(answers => {
+                nconf.set('language', answers['language'])
+                nconf.save()
+                resolve()
+            });
         });
     }
 
     // 执行lint的核心方法
-    excute_lint() {
+    async excute_lint() {
         nconf.argv().env().file({ file: sc_local_config });
         const language = nconf.get('language');
         const provider = this.providers.filter(x => x.languageName() === language)
@@ -62,7 +64,7 @@ class Worker {
             return;
         }
         const excutor = provider[0];
-        excutor.lint();
+        await excutor.lint();
     }
 
     bury_hooks() {
@@ -148,33 +150,33 @@ class Worker {
         this.excute_lint();
     }
 
-    run() {
+    async run() {
         // 检查当前所在的目录是否为Git目录
         if (!fs.existsSync(git_home)) {
             console.error('当前目录非Git目录或者非Git根目录，请切换目录再试~'.red);
             return;
         }
-        this.create_global_dir_ifneed()
-        this.create_local_dir_ifneed(() => {
-            this.bury_hooks();
-            inquirer.prompt(this.build_commit_question()).then(answers => {
-                const module = answers['module'];
-                const message = answers['message'];
-                const type = answers['commit-type'];
-                const handler = (error, stdout, stderr) => {
-                    if (error) {
-                        console.log(stderr.red);
-                    } else {
-                        console.log(stdout.yellow);
-                    }
-                };
-                if (module.length != 0) {
-                    exec(`git commit -m '${type}: [${module}] ${message}'`, handler);
+        this.create_global_dir_ifneed();
+        await this.create_local_dir_ifneed();
+        this.bury_hooks();
+        await this.excute_lint();
+        inquirer.prompt(this.build_commit_question()).then(answers => {
+            const module = answers['module'];
+            const message = answers['message'];
+            const type = answers['commit-type'];
+            const handler = (error, stdout, stderr) => {
+                if (error) {
+                    console.log(stderr.red);
                 } else {
-                    exec(`git commit -m '${type}: ${message}'`, handler);
+                    console.log(stdout.yellow);
                 }
-            });
-        })
+            };
+            if (module.length != 0) {
+                exec(`git commit -m '${type}: [${module}] ${message}'`, handler);
+            } else {
+                exec(`git commit -m '${type}: ${message}'`, handler);
+            }
+        });
     }
 }
 
