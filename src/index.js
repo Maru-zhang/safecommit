@@ -160,23 +160,22 @@ class Worker {
         await this.create_local_dir_ifneed();
         this.bury_hooks();
         await this.excute_lint();
-        inquirer.prompt(this.build_commit_question()).then(answers => {
-            const module = answers['module'];
-            const message = answers['message'];
-            const type = answers['commit-type'];
-            const handler = (error, stdout, stderr) => {
-                if (error) {
-                    console.log(stderr.red);
-                } else {
-                    console.log(stdout.yellow);
-                }
-            };
-            if (module.length != 0) {
-                exec(`git commit -m '${type}: [${module}] ${message}'`, handler);
+        const answers = await inquirer.prompt(this.build_commit_question());
+        const module = answers['module'];
+        const message = answers['message'];
+        const type = answers['commit-type'];
+        const handler = (error, stdout, stderr) => {
+            if (error) {
+                console.log(stderr.red);
             } else {
-                exec(`git commit -m '${type}: ${message}'`, handler);
+                console.log(stdout.yellow);
             }
-        });
+        };
+        if (module.length != 0) {
+            exec(`git commit -m '${type}: [${module}] ${message}'`, handler);
+        } else {
+            exec(`git commit -m '${type}: ${message}'`, handler);
+        }
     }
 }
 
