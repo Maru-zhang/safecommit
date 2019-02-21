@@ -9,7 +9,7 @@
   "author": "maru",
   "license": "ISC",
   "bin": {
-    "git-sc": "./src/index.js"
+    "git-sc": "./src/cli.js"
   },
   "dependencies": {
     "colors": "^1.3.3",
