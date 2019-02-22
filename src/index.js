@@ -73,9 +73,11 @@ class Worker {
             fs.mkdirSync(path)
         }
         var content = '#!/usr/bin/env node\n';
-        content += `Worker = require('/Users/maru/WorkBench/SafeCommit');\n`;
-        content += `worker = new Worker();\n`;
-        content += `worker.run_before_commit();`
+        content += 'try {\n';
+        content += `    Worker = require('/Users/maru/WorkBench/SafeCommit');\n`;
+        content += `    worker = new Worker();\n`;
+        content += `    worker.run_before_commit();\n`;
+        content += `} catch (error) {}\n`;
         fs.writeFileSync(`${path}/sc-commit-msg.js`, content);
         content = '#!/usr/bin/env bash\n'
         content += 'PATH="/usr/local/bin:$PATH"\n';
