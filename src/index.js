@@ -174,11 +174,14 @@ class Worker {
                 console.log(stdout.yellow);
             }
         };
+        var execution;
         if (module.length != 0) {
-            exec(`git commit -m '${type}: [${module}] ${message}'`, handler);
+            execution = `git commit -m '${type}: [${module}] ${message}'`;
         } else {
-            exec(`git commit -m '${type}: ${message}'`, handler);
+            execution = `git commit -m '${type}: ${message}'`;
         }
+        console.log(`🎯: ${execution}`);
+        exec(execution, handler);
     }
 }
 

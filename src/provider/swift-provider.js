@@ -54,7 +54,7 @@ class SwiftProvider extends Provider {
                     json = [];
                 }
                 if (json.length == 0) {
-                    console.log('SwiftLint校验已经通过~'.green);
+                    console.log('🎉 SwiftLint校验已经通过~'.green);
                     resolve();
                     return;
                 }
