@@ -187,6 +187,7 @@ class Worker {
     const handler = (error, stdout, stderr) => {
       if (error) {
         console.log(stderr.red);
+        console.log(stdout.red);
       } else {
         console.log(stdout.yellow);
       }
