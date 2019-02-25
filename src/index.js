@@ -90,7 +90,7 @@ class Worker {
     }
     let content = '#!/usr/bin/env node\n';
     content += 'try {\n';
-    content += '    Worker = require(\'/Users/maru/WorkBench/SafeCommit\');\n';
+    content += '    Worker = require(\'safecommit\');\n';
     content += '    worker = new Worker();\n';
     content += '    worker.run_before_commit();\n';
     content += '} catch (error) {}\n';
@@ -102,7 +102,8 @@ class Worker {
     content += '  . $HOME/.nvm/nvm.sh\n';
     content += '  PATH="$HOME/.nvm/versions/node/$(nvm current)/bin:$PATH"\n';
     content += 'fi\n';
-    content += 'node ./.git/hooks/sc-commit-msg.js';
+    content += 'node ./.git/hooks/sc-commit-msg.js\n';
+    content += 'npm link safecommit';
     fs.writeFileSync(`${path}/commit-msg`, content);
     fs.chmodSync(`${path}/commit-msg`, '777');
   }
