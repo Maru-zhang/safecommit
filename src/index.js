@@ -5,7 +5,9 @@ require('colors');
 const fs = require('fs');
 const nconf = require('nconf');
 const inquirer = require('inquirer');
+const { deleteFolderRecursive } = require('./utils');
 const swiftProvider = require('./provider/swift-provider');
+const noneProvider = require('./provider/none-provider');
 const messageLinter = require('./provider/msglinter');
 
 const cwd = process.cwd();
@@ -17,7 +19,7 @@ const globalSCHome = `${home}/.safecommit`;
 
 class Worker {
   constructor() {
-    this.providers = [swiftProvider];
+    this.providers = [swiftProvider, noneProvider];
   }
 
   createGlobalDirIfneed() {
@@ -72,11 +74,12 @@ class Worker {
       return;
     }
     try {
-      fs.rmdirSync(scHome);
-      fs.unlinkSync(`${scHome}/hooks/sc-commit-msg.js`);
-      fs.unlinkSync(`${scHome}/hooks/commit-msg`);
-    } catch (error) {
+      deleteFolderRecursive(scHome);
+      fs.unlinkSync(`${gitHome}/hooks/sc-commit-msg.js`);
+      fs.unlinkSync(`${gitHome}/hooks/commit-msg`);
       console.log('当前的环境已经重置'.green);
+    } catch (error) {
+      console.log('当前的环境已经重置'.red);
     }
   }
 
