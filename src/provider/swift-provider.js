@@ -29,6 +29,12 @@ class SwiftProvider extends Provider {
           'fatal_error_message',
           'force_unwrapping',
           'force_try',
+          'vertical_whitespace_closing_braces',
+          'vertical_whitespace_opening_braces',
+          'vertical_whitespace_between_cases',
+          'let_var_whitespace',
+          'trailing_whitespace',
+          'opening_brace'
         ]);
         fs.writeFileSync(configPath, ruleContent);
       }
