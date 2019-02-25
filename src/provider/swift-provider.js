@@ -41,8 +41,8 @@ class SwiftProvider extends Provider {
       let lintExcution = '#! /bin/bash\n';
       lintExcution += 'command -v swiftlint >/dev/null 2>&1 || { echo >&2 "请先安装Swiftlint"; exit 1; }\n';
       lintExcution += 'temp_file=$(mktemp)\n';
-      lintExcution += 'git ls-files -m  | grep ".swift" > ${temp_file}\n';
-      lintExcution += 'git diff --name-only --cached  | grep ".swift" >> ${temp_file}\n';
+      lintExcution += 'git ls-files -m  | grep ".swift$" > ${temp_file}\n';
+      lintExcution += 'git diff --name-only --cached  | grep ".swift$" >> ${temp_file}\n';
       lintExcution += 'counter=0\n';
       lintExcution += 'for f in `sort ${temp_file} | uniq`\n';
       lintExcution += 'do\n';
