@@ -90,20 +90,21 @@ class Worker {
     }
     let content = '#!/usr/bin/env node\n';
     content += 'try {\n';
-    content += '    Worker = require(\'safecommit\');\n';
+    content += '    Worker = require(process.argv[2]);\n';
     content += '    worker = new Worker();\n';
     content += '    worker.run_before_commit();\n';
     content += '} catch (error) {}\n';
     fs.writeFileSync(`${path}/sc-commit-msg.js`, content);
     content = '#!/usr/bin/env bash\n';
     content += 'PATH="/usr/local/bin:$PATH"\n';
+    content += 'NODE_PATH="/usr/lib/node_modules/safecommit"\n';
     content += 'if [ -f $HOME/.nvm/nvm.sh ]\n';
     content += 'then\n';
     content += '  . $HOME/.nvm/nvm.sh\n';
     content += '  PATH="$HOME/.nvm/versions/node/$(nvm current)/bin:$PATH"\n';
+    content += '  NODE_PATH="$HOME/.nvm/versions/node/$(nvm current)/lib/node_modules/safecommit"\n';
     content += 'fi\n';
-    content += 'node ./.git/hooks/sc-commit-msg.js\n';
-    content += 'npm link safecommit';
+    content += 'node ./.git/hooks/sc-commit-msg.js $NODE_PATH\n';
     fs.writeFileSync(`${path}/commit-msg`, content);
     fs.chmodSync(`${path}/commit-msg`, '777');
   }
