@@ -66,7 +66,7 @@ class SwiftProvider extends Provider {
           return;
         }
         const reducer = (result, x) => `${result}${x.file}:${x.line}:${x.character}:${x.reason}\n`;
-        const content = `${json.reduce(reducer, '')}您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide`;
+        const content = `${json.reduce(reducer, '').yellow}${'您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide'.red}`;
         console.log(content.red);
         process.exit(1);
       });
