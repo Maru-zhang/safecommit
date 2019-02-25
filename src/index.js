@@ -65,6 +65,21 @@ class Worker {
     await excutor.lint();
   }
 
+  // 重置当前git的hook目录环境
+  reset() {
+    if (!fs.existsSync(gitHome)) {
+      console.error('当前目录非Git目录或者非Git根目录，请切换目录再试~'.red);
+      return;
+    }
+    try {
+      fs.rmdirSync(scHome);
+      fs.unlinkSync(`${scHome}/hooks/sc-commit-msg.js`);
+      fs.unlinkSync(`${scHome}/hooks/commit-msg`);
+    } catch (error) {
+      console.log('当前的环境已经重置'.green);
+    }
+  }
+
   buryHooks() {
     const path = `${gitHome}/hooks`;
     if (!fs.existsSync(path)) {
