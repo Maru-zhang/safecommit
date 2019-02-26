@@ -34,7 +34,7 @@ class SwiftProvider extends Provider {
           'vertical_whitespace_between_cases',
           'let_var_whitespace',
           'trailing_whitespace',
-          'opening_brace'
+          'opening_brace',
         ]);
         fs.writeFileSync(configPath, ruleContent);
       }
