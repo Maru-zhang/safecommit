@@ -5,6 +5,7 @@ var colors = require('colors');
 var nconf = require('nconf');
 var inquirer = require('inquirer');
 var swiftProvider = require('./provider/swift-provider');
+var javaProvider = require('./provider/java-provider');
 var messageLinter = require('./provider/msglinter');
 const { exec } = require('child_process');
 
@@ -19,7 +20,7 @@ const global_sc_config = `${global_sc_home}/config.json`;
 class Worker {
 
     constructor() {
-        this.providers = [swiftProvider]
+        this.providers = [swiftProvider, javaProvider]
     }
 
     create_global_dir_ifneed() {
