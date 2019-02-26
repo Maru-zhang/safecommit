@@ -17,8 +17,6 @@ npm install safecommit -g
 
 ### 2.使用
 
-> 注意：如果您习惯使用SourceTree等GUI工具，那么请您在您的项目中至少第一次使用`git sc`进行提交，此后的所有操作都可以在您的GUI工具中进行。
-
 当您想使用`git commit`操作的时候，请使用`git sc`进行替代。
 
 ### 3.使用步骤
@@ -39,3 +37,6 @@ npm install safecommit -g
 
 ![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/demo-4.png)
  
+ > 注意：如果您习惯使用SourceTree等GUI工具，那么请您在您的项目中至少第一次使用`git sc`进行提交，此后的所有操作都可以在您的GUI工具中进行。
+
+ ![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/gui-report.png)
