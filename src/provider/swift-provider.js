@@ -5,6 +5,7 @@ const Provider = require('./provider');
 require('colors');
 
 const configPath = `${process.cwd()}/.git/safecommit/.swiftlint.yml`;
+const globalConfigPath = `${process.env.HOME}/.safecommit/.swiftlint.yml`;
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["languageName", "lint", "genergateRule"] }] */
 class SwiftProvider extends Provider {
@@ -14,9 +15,15 @@ class SwiftProvider extends Provider {
 
   lint() {
     return new Promise((resolve) => {
+      let conclusivePath;
       if (!fs.existsSync(configPath)) {
         const ruleContent = this.genergateDefaultRules();
         fs.writeFileSync(configPath, ruleContent);
+      }
+      if (fs.existsSync(globalConfigPath)) {
+        conclusivePath = globalConfigPath;
+      } else {
+        conclusivePath = configPath;
       }
       const localYmlExist = fs.existsSync(`${process.cwd()}/.swiftlint.yml`);
       let lintExcution = '#! /bin/bash\n';
@@ -33,7 +40,7 @@ class SwiftProvider extends Provider {
       lintExcution += 'if (( counter > 0 )); then\n';
       lintExcution += '    export SCRIPT_INPUT_FILE_COUNT=${counter}\n';
       if (localYmlExist) {
-        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${configPath}\n`;
+        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${conclusivePath}\n`;
       } else {
         lintExcution += '    swiftlint lint --use-script-input-files --reporter "json"\n';
       }

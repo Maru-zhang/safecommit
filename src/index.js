@@ -4,6 +4,7 @@ require('colors');
 const fs = require('fs');
 const nconf = require('nconf');
 const inquirer = require('inquirer');
+const request = require('request');
 const { deleteFolderRecursive } = require('./utils');
 const swiftProvider = require('./provider/swift-provider');
 const javaProvider = require('./provider/java-provider');
@@ -170,6 +171,21 @@ class Worker {
         default: '',
       },
     ];
+  }
+
+  /* 配置全局路径 */
+  setSwiftConfigPath(path) {
+    if (!path) {
+      console.error('非法地址!'.red);
+      return;
+    }
+    if (!fs.existsSync(globalSCHome)) {
+      fs.mkdirSync(globalSCHome);
+    }
+    request(path, (error, response, body) => {
+      fs.writeFileSync(`${globalSCHome}/.swiftlint.yml`, body);
+      console.log('全局配置更新成功~'.green);
+    });
   }
 
   /* 如果版本升级，那么需要更新配置 */
