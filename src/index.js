@@ -74,7 +74,7 @@ class Worker {
             fs.mkdirSync(path)
         }
         var content = '#!/usr/bin/env node\n';
-        content += `Worker = require('/Users/mmrx/Documents/souche/code/Node/scGitCli');\n`;
+        content += `Worker = require('/Users/maru/WorkBench/SafeCommit');\n`;
         content += `worker = new Worker();\n`;
         content += `worker.run_before_commit();`
         fs.writeFileSync(`${path}/sc-commit-msg.js`, content);
