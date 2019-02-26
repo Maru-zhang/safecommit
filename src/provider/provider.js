@@ -3,6 +3,8 @@ class provider {
   languageName() { return ''; }
 
   lint() {}
+
+  didUpdate() {}
 }
 
 module.exports = provider;

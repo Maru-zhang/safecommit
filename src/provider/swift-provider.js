@@ -4,6 +4,8 @@ const Provider = require('./provider');
 
 require('colors');
 
+const configPath = `${process.cwd()}/.git/safecommit/.swiftlint.yml`;
+
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["languageName", "lint", "genergateRule"] }] */
 class SwiftProvider extends Provider {
   languageName() {
@@ -12,30 +14,8 @@ class SwiftProvider extends Provider {
 
   lint() {
     return new Promise((resolve) => {
-      const configPath = `${process.cwd()}/.git/safecommit/.swiftlint.yml`;
       if (!fs.existsSync(configPath)) {
-        const ruleContent = this.genergateRule([
-          'empty_count',
-          'array_init',
-          'closure_spacing',
-          'vertical_whitespace',
-          'compiler_protocol_init',
-          'force_cast',
-          'comma',
-          'void_return',
-          'closing_brace',
-          'block_based_kvo',
-          'colon',
-          'fatal_error_message',
-          'force_unwrapping',
-          'force_try',
-          'vertical_whitespace_closing_braces',
-          'vertical_whitespace_opening_braces',
-          'vertical_whitespace_between_cases',
-          'let_var_whitespace',
-          'trailing_whitespace',
-          'opening_brace',
-        ]);
+        const ruleContent = this.genergateDefaultRules();
         fs.writeFileSync(configPath, ruleContent);
       }
       let lintExcution = '#! /bin/bash\n';
@@ -71,6 +51,37 @@ class SwiftProvider extends Provider {
         process.exit(1);
       });
     });
+  }
+
+  didUpdate() {
+    const ruleContent = this.genergateDefaultRules();
+    fs.writeFileSync(configPath, ruleContent);
+    console.log('🔨 SwiftLint配置文件已经更新~'.green);
+  }
+
+  genergateDefaultRules() {
+    return this.genergateRule([
+      'empty_count',
+      'array_init',
+      'closure_spacing',
+      'vertical_whitespace',
+      'compiler_protocol_init',
+      'force_cast',
+      'comma',
+      'void_return',
+      'closing_brace',
+      'block_based_kvo',
+      'colon',
+      'fatal_error_message',
+      'force_unwrapping',
+      'force_try',
+      'vertical_whitespace_closing_braces',
+      'vertical_whitespace_opening_braces',
+      'vertical_whitespace_between_cases',
+      'let_var_whitespace',
+      'trailing_whitespace',
+      'opening_brace',
+    ]);
   }
 
   genergateRule(rules) {

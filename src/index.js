@@ -20,6 +20,8 @@ const globalSCHome = `${home}/.safecommit`;
 class Worker {
   constructor() {
     this.providers = [swiftProvider, javaProvider, noneProvider];
+    this.version = null;
+    this.didUpdate = false;
   }
 
   createGlobalDirIfneed() {
@@ -31,13 +33,14 @@ class Worker {
 
   createLocalDirIfneed() {
     return new Promise((resolve) => {
-      if (fs.existsSync(scHome)) {
-        nconf.argv().env().file({ file: scLocalConfig });
+      if (!fs.existsSync(scHome)) {
+        fs.mkdirSync(scHome, null);
+      }
+      nconf.argv().env().file({ file: scLocalConfig });
+      if (fs.existsSync(scLocalConfig)) {
         resolve();
         return;
       }
-      fs.mkdirSync(scHome, null);
-      nconf.argv().env().file({ file: scLocalConfig });
       const questions = [
         {
           type: 'rawlist',
@@ -64,6 +67,9 @@ class Worker {
       return;
     }
     const excutor = provider[0];
+    if (this.didUpdate) {
+      excutor.didUpdate();
+    }
     await excutor.lint();
   }
 
@@ -166,12 +172,25 @@ class Worker {
     ];
   }
 
+  /* 如果版本升级，那么需要更新配置 */
+  updateConfigIfNeed() {
+    if (!this.version) { return; }
+    nconf.argv().env().file({ file: scLocalConfig });
+    const localVersion = nconf.get('version');
+    if (!localVersion || localVersion !== this.version) {
+      nconf.set('version', this.version);
+      nconf.save();
+      this.didUpdate = true;
+    }
+  }
+
   /* eslint-disable camelcase */
   async run_before_commit() {
     await this.excuteLint();
     messageLinter();
   }
 
+  /* cli的入口 */
   async run() {
     // 检查当前所在的目录是否为Git目录
     if (!fs.existsSync(gitHome)) {
@@ -181,6 +200,7 @@ class Worker {
     this.createGlobalDirIfneed();
     await this.createLocalDirIfneed();
     this.buryHooks();
+    this.updateConfigIfNeed();
     await this.excuteLint();
     const answers = await inquirer.prompt(this.buildCommitQuestion());
     const { module } = answers;
