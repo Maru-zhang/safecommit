@@ -201,7 +201,7 @@ class Worker {
       execution = `git commit -m '${type}: ${message}'`;
     }
     console.log(`🎯: ${execution}`);
-    exec(execution, handler);
+    exec(`${execution} --no-verify`, handler);
   }
 }
 
