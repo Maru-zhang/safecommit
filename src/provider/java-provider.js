@@ -20,9 +20,6 @@ const jar_download_cmd = `git clone ${jar_git_addr} ${jar_dir}jarTempDir`; // �
 const jar_mv_cmd = `mv ${work_dir}jarTempDir/* ${work_dir}`; // 将jar包和配置文件移动到工作目录
 const jar_rm_cmd = `rm -rf ${work_dir}jarTempDir/`;// 删除临时目录
 
-
-
-
 class JavaProvider extends Provider {
 
     languageName() {

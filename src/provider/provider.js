@@ -1,9 +1,8 @@
 class provider {
+  // 语言名称
+  languageName() { return ''; }
 
-    // 语言名称
-    languageName() { return "" }
-
-    lint() {}
+  lint() {}
 }
 
 module.exports = provider;
