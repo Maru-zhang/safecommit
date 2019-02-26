@@ -220,7 +220,6 @@ class Worker {
     } else {
       execution = `git commit -m '${type}: ${message}'`;
     }
-    console.log(`🎯: ${execution}`);
     exec(`${execution} --no-verify`, handler);
   }
 }
