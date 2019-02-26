@@ -18,6 +18,7 @@ class SwiftProvider extends Provider {
         const ruleContent = this.genergateDefaultRules();
         fs.writeFileSync(configPath, ruleContent);
       }
+      const localYmlExist = fs.existsSync(`${process.cwd()}/.swiftlint.yml`);
       let lintExcution = '#! /bin/bash\n';
       lintExcution += 'command -v swiftlint >/dev/null 2>&1 || { echo >&2 "请先安装Swiftlint"; exit 1; }\n';
       lintExcution += 'temp_file=$(mktemp)\n';
@@ -31,7 +32,11 @@ class SwiftProvider extends Provider {
       lintExcution += 'done \n';
       lintExcution += 'if (( counter > 0 )); then\n';
       lintExcution += '    export SCRIPT_INPUT_FILE_COUNT=${counter}\n';
-      lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${configPath}\n`;
+      if (localYmlExist) {
+        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${configPath}\n`;
+      } else {
+        lintExcution += '    swiftlint lint --use-script-input-files --reporter "json"\n';
+      }
       lintExcution += 'fi';
       exec(lintExcution, (error, stdout) => {
         let json;
