@@ -40,3 +40,39 @@ npm install safecommit -g
  > 注意：如果您习惯使用SourceTree等GUI工具，那么请您在您的项目中至少第一次使用`git sc`进行提交，此后的所有操作都可以在您的GUI工具中进行。
 
  ![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/gui-report.png)
+
+
+### 4. 进阶使用
+
+#### 1.重置当前仓库的配置
+
+> 使用该命令可以使得你当前的仓库重置，所有的设定都还原初始。
+
+```
+git sc -s
+```
+或者
+```
+git sc --reset
+```
+
+####  2.配置全局文件
+
+> 如果你希望使用团队统一的配置，将配置文件保存在远程Git仓库中，然后通过下面的命令进行全局配置。
+> 配置完成之后，所有的Swift工程都将应用该配置，除非该工程本地存在`.swiftlint.yml`文件。
+
+```
+git sc -c <https://example/swiftlint.yml>
+```
+或者
+```
+git sc --swift-config <https://example/swiftlint.yml>
+```
+
+## 贡献
+
+感谢以下开发者的贡献。
+
+* 张斌辉
+* 刘林儒
+* 周辉平
