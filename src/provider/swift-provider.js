@@ -58,7 +58,7 @@ class SwiftProvider extends Provider {
           return;
         }
         const reducer = (result, x) => `${result}${x.file}:${x.line}:${x.character}:${x.reason}\n`;
-        const content = `${json.reduce(reducer, '').yellow}${'您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide'.red}`;
+        const content = `${json.reduce(reducer, '').replace(/\n$/, '').yellow}`;
         console.log(content);
         // 定位错误
         let errorContent = '';
@@ -86,10 +86,11 @@ class SwiftProvider extends Provider {
             errorCount += 1;
           }
         });
-        console.log(`SwiftLint found ${warningCount} warnings, ${errorCount} errors. Please fix them and try 'git sc' again.\n`.red);
         console.log(errorfile.red);
         // 截取错误代码片段
         cutfilelines(errorfile, parseInt(errorLine, 0), parseInt(errorCharacter, 0), errorContent);
+        console.log(`SwiftLint found ${warningCount} warnings, ${errorCount} errors. Please fix them and try 'git sc' again.`.red);
+        console.log('您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide'.red);
         process.exit(1);
       });
     });
