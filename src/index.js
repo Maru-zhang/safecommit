@@ -5,7 +5,7 @@ const fs = require('fs');
 const nconf = require('nconf');
 const inquirer = require('inquirer');
 const request = require('request');
-const { deleteFolderRecursive } = require('./utils');
+const { deleteFolderRecursive, checkUpdate } = require('./utils');
 const swiftProvider = require('./provider/swift-provider');
 const javaProvider = require('./provider/java-provider');
 const noneProvider = require('./provider/none-provider');
@@ -208,6 +208,7 @@ class Worker {
 
   /* cli的入口 */
   async run() {
+    await checkUpdate();
     // 检查当前所在的目录是否为Git目录
     if (!fs.existsSync(gitHome)) {
       console.error('当前目录非Git目录或者非Git根目录，请切换目录再试~'.red);

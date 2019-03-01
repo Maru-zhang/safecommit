@@ -13,12 +13,21 @@
   "bin": {
     "git-sc": "./src/cli.js"
   },
+  "keywords": [
+    "commit",
+    "pretty",
+    "lint",
+    "conventional",
+    "safecommit",
+    "sc"
+  ],
   "dependencies": {
     "colors": "^1.3.3",
     "commander": "^2.19.0",
     "inquirer": "^6.2.2",
     "nconf": "^0.10.0",
     "request": "^2.88.0",
+    "update-check": "^1.5.3",
     "xml-reader": "^2.4.3"
   },
   "devDependencies": {

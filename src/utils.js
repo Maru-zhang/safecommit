@@ -1,4 +1,5 @@
 const fs = require('fs');
+const checkForUpdate = require('update-check');
 const ReadLineSync = require('./readline-sync');
 require('colors');
 
@@ -45,5 +46,20 @@ function cutfilelines(file, startline, character, reason) {
   liner.close();
 }
 
+// 检查版本并且更新提示
+async function checkUpdate() {
+  let update = null;
+  try {
+    const pkg = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf8'));
+    update = await checkForUpdate(pkg);
+  } catch (error) {
+    update = false;
+  }
+  if (update) {
+    console.log(`当前的最新版本为【${update.latest}】，为了更好的体验我们建议您升级版本!`.yellow);
+  }
+}
+
 exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.cutfilelines = cutfilelines;
+exports.checkUpdate = checkUpdate;
