@@ -11,6 +11,22 @@
 
 ### 1.安装
 
+#### [Node](https://nodejs.org/)(如果你已经安装`node`可以跳过此节)
+
+你可以通过[Node](https://nodejs.org/)官网直接下载`pkg`来手动安装。
+
+或者也可以通过`brew`来一键安装。
+
+```
+brew install node
+```
+
+安装完成之后，使用下列的命令查看当前`Node`的版本。
+
+```
+node -v
+```
+
 #### [npm](https://github.com/npm/cli)（如果你已经安装`npm`可以跳过此节）
 
 ```

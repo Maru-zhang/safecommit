@@ -228,7 +228,7 @@ class Worker {
         console.log(stderr.red);
         console.log(stdout.red);
       } else {
-        console.log(stdout.yellow);
+        console.log(stdout.gray);
       }
     };
     let execution;
