@@ -11,6 +11,14 @@
 
 ### 1.安装
 
+#### [npm](https://github.com/npm/cli)（如果你已经安装`npm`可以跳过此节）
+
+```
+curl -L https://www.npmjs.com/install.sh | sh
+```
+
+#### SafeCommit安装
+
 ```
 npm install safecommit -g
 ```
@@ -69,10 +77,19 @@ git sc -c <https://example/swiftlint.yml>
 git sc --swift-config <https://example/swiftlint.yml>
 ```
 
+### 5. 常见问题
+
+#### 1. 无法找到最新的版本号
+
+请尝试下列命令之后再安装:
+```
+npm config set registry https://registry.npmjs.org/
+```
+
 ## 贡献
 
 感谢以下开发者的贡献。
 
-* 张斌辉
-* 刘林儒
-* 周辉平
+* [张斌辉](zhangbinhui@souche.com)
+* [刘林儒](liulinru@souche.com)
+* [周辉平](zhouhuiping@souche.com)
