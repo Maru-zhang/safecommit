@@ -25,7 +25,8 @@ class SwiftProvider extends Provider {
       } else {
         conclusivePath = configPath;
       }
-      const localYmlExist = fs.existsSync(`${process.cwd()}/.swiftlint.yml`);
+      const localConfigPath = `${process.cwd()}/.swiftlint.yml`;
+      const localYmlExist = fs.existsSync(localConfigPath);
       let lintExcution = '#! /bin/bash\n';
       lintExcution += 'command -v swiftlint >/dev/null 2>&1 || { echo >&2 "请先安装Swiftlint"; exit 1; }\n';
       lintExcution += 'temp_file=$(mktemp)\n';
@@ -40,9 +41,9 @@ class SwiftProvider extends Provider {
       lintExcution += 'if (( counter > 0 )); then\n';
       lintExcution += '    export SCRIPT_INPUT_FILE_COUNT=${counter}\n';
       if (localYmlExist) {
-        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${conclusivePath}\n`;
+        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${localConfigPath}\n`;
       } else {
-        lintExcution += '    swiftlint lint --use-script-input-files --reporter "json"\n';
+        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${conclusivePath}\n`;
       }
       lintExcution += 'fi';
       exec(lintExcution, (error, stdout) => {
@@ -128,8 +129,15 @@ class SwiftProvider extends Provider {
   }
 
   genergateRule(rules) {
+    let prefixContent = 'trailing_whitespace:\n';
+    prefixContent += '  ignores_empty_lines: true\n';
+    prefixContent += '  ignores_comments: true\n';
+    prefixContent += 'excluded:\n';
+    prefixContent += '  - Pods\n';
+    prefixContent += '  - Tests\n';
+    prefixContent += 'whitelist_rules:';
     const reducer = (result, current) => `${result}\n  - ${current}`;
-    return rules.reduce(reducer, 'whitelist_rules:\n');
+    return rules.reduce(reducer, prefixContent);
   }
 }
 
