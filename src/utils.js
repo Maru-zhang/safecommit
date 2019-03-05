@@ -29,15 +29,15 @@ function cutfilelines(file, startline, character, reason) {
       let content = '';
       const isThisLine = (index === startline);
       if (isThisLine) {
-        content += `> ${index} | ${theline}\n`.red;
+        content += `> ${index} | ${theline}\n`.grey;
         const spacelegth = `${index}`.length + 5 + character;
         for (let i = 0; i < spacelegth - 1; i++) {
           content += ' ';
         }
-        content += '^\n'.red;
-        content += reason.red;
+        content += '^\n'.yellow;
+        content += reason.yellow;
       } else {
-        content += `${index} | ${theline}`.red;
+        content += `${index} | ${theline}`.grey;
       }
       console.log(content);
     }

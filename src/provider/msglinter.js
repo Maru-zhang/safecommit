@@ -25,4 +25,3 @@ function checkMessage() {
 
 exports.checkMessage = checkMessage;
 exports.evaluateMessage = evaluateMessage;
-
