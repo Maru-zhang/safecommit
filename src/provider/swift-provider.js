@@ -13,20 +13,9 @@ class SwiftProvider extends Provider {
     return 'swift';
   }
 
-  lint() {
+  lint(autoformat = false) {
     return new Promise((resolve) => {
-      let conclusivePath;
-      if (!fs.existsSync(configPath)) {
-        const ruleContent = this.genergateDefaultRules();
-        fs.writeFileSync(configPath, ruleContent);
-      }
-      if (fs.existsSync(globalConfigPath)) {
-        conclusivePath = globalConfigPath;
-      } else {
-        conclusivePath = configPath;
-      }
-      const localConfigPath = `${process.cwd()}/.swiftlint.yml`;
-      const localYmlExist = fs.existsSync(localConfigPath);
+      const endpointPath = this.fetchEndPointPath();
       let lintExcution = '#! /bin/bash\n';
       lintExcution += 'command -v swiftlint >/dev/null 2>&1 || { echo >&2 "请先安装Swiftlint"; exit 1; }\n';
       lintExcution += 'temp_file=$(mktemp)\n';
@@ -40,13 +29,17 @@ class SwiftProvider extends Provider {
       lintExcution += 'done \n';
       lintExcution += 'if (( counter > 0 )); then\n';
       lintExcution += '    export SCRIPT_INPUT_FILE_COUNT=${counter}\n';
-      if (localYmlExist) {
-        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${localConfigPath}\n`;
+      if (autoformat) {
+        lintExcution += `    swiftlint autocorrect --use-script-input-files --config ${endpointPath}\n`;
       } else {
-        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${conclusivePath}\n`;
+        lintExcution += `    swiftlint lint --use-script-input-files --reporter "json" --config ${endpointPath}\n`;
       }
       lintExcution += 'fi';
       exec(lintExcution, (error, stdout) => {
+        if (autoformat) {
+          console.log(stdout);
+          return;
+        }
         let json;
         try {
           json = JSON.parse(stdout);
@@ -97,12 +90,38 @@ class SwiftProvider extends Provider {
     });
   }
 
+  async format() {
+    await this.lint(true);
+  }
+
   didUpdate() {
     const ruleContent = this.genergateDefaultRules();
     fs.writeFileSync(configPath, ruleContent);
     console.log('🔨 SwiftLint配置文件已经更新~'.green);
   }
 
+  /**
+   * 获取当前的SwiftLint配置文件路径
+   */
+  fetchEndPointPath() {
+    let conclusivePath;
+    if (!fs.existsSync(configPath)) {
+      const ruleContent = this.genergateDefaultRules();
+      fs.writeFileSync(configPath, ruleContent);
+    }
+    if (fs.existsSync(globalConfigPath)) {
+      conclusivePath = globalConfigPath;
+    } else {
+      conclusivePath = configPath;
+    }
+    const localConfigPath = `${process.cwd()}/.swiftlint.yml`;
+    const localYmlExist = fs.existsSync(localConfigPath);
+    return localYmlExist ? localConfigPath : conclusivePath;
+  }
+
+  /**
+   * 产出一份默认的配置表
+   */
   genergateDefaultRules() {
     return this.genergateRule([
       'empty_count',

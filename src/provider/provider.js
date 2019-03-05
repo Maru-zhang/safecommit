@@ -4,6 +4,8 @@ class provider {
 
   lint() {}
 
+  format() {}
+
   didUpdate() {}
 }
 

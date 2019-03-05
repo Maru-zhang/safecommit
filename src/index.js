@@ -6,6 +6,8 @@ const nconf = require('nconf');
 const inquirer = require('inquirer');
 const request = require('request');
 const { deleteFolderRecursive, checkUpdate } = require('./utils');
+const { commitQuestion } = require('./datasource/commitds');
+const { Strategy } = require('./provider/strategy');
 const swiftProvider = require('./provider/swift-provider');
 const javaProvider = require('./provider/java-provider');
 const noneProvider = require('./provider/none-provider');
@@ -60,18 +62,36 @@ class Worker {
 
   // 执行lint的核心方法
   async excuteLint() {
+    const excutor = this.findSuitableLinter();
+    if (!excutor) { return; }
+    await excutor.lint();
+  }
+
+  /**
+   * 执行代码格式化
+   */
+  async excuteFormat() {
+    const excutor = this.findSuitableLinter();
+    if (!excutor) { return; }
+    await excutor.format();
+  }
+
+  /**
+   * 找到当前最适合的linter
+   */
+  findSuitableLinter() {
     nconf.argv().env().file({ file: scLocalConfig });
     const language = nconf.get('language');
     const provider = this.providers.filter(x => x.languageName() === language);
     if (provider.length === 0) {
-      console.log('没有发现可用的lint');
-      return;
+      console.log('没有发现可用的lint'.red);
+      return null;
     }
     const excutor = provider[0];
     if (this.didUpdate) {
       excutor.didUpdate();
     }
-    await excutor.lint();
+    return excutor;
   }
 
   // 重置当前git的hook目录环境
@@ -143,6 +163,9 @@ class Worker {
     }
   }
 
+  /**
+   * commit hook的执行入口
+   */
   /* eslint-disable camelcase */
   async run_before_commit() {
     await this.excuteLint();
@@ -150,7 +173,7 @@ class Worker {
   }
 
   /* cli的入口 */
-  async run(inputMsg = null) {
+  async run(strategy = Strategy.COMMIT, inputMsg = null) {
     await checkUpdate();
     // 检查当前所在的目录是否为Git目录
     if (!fs.existsSync(gitHome)) {
@@ -161,13 +184,17 @@ class Worker {
     await this.createLocalDirIfneed();
     this.buryHooks();
     this.updateConfigIfNeed();
+    if (strategy === Strategy.FORMAT) {
+      await this.excuteFormat();
+      return;
+    }
     await this.excuteLint();
     let execution;
     if (inputMsg) {
       execution = `git commit -m '${inputMsg}'`;
       evaluateMessage(inputMsg);
     } else {
-      const answers = await inquirer.prompt(this.buildCommitQuestion());
+      const answers = await inquirer.prompt(commitQuestion);
       const { message, scope, type } = answers;
       if (scope.length !== 0) {
         execution = `git commit -m '${type}: [${scope}] ${message}'`;
@@ -184,63 +211,6 @@ class Worker {
       }
     };
     exec(`${execution} --no-verify`, handler);
-  }
-
-  buildCommitQuestion() {
-    return [
-      {
-        type: 'list',
-        name: 'type',
-        message: '请选择你所要提交的commit类型',
-        choices: [
-          {
-            name: 'feat: 新功能（feature）',
-            value: 'feat',
-          },
-          {
-            name: 'fix: 修补问题',
-            value: 'fix',
-          },
-          {
-            name: 'docs: 更新文档',
-            value: 'docs',
-          },
-          {
-            name: 'refactor: 重构（即不是新增功能，也不是修改bug的代码变动）',
-            value: 'refactor',
-          },
-          {
-            name: 'chore: bump version to [版本号]',
-            value: 'chore',
-          },
-          {
-            name: 'test: 增加测试',
-            value: 'test',
-          },
-          {
-            name: 'style: 格式变更（不影响代码运行的变动）',
-            value: 'style',
-          },
-        ],
-      },
-      {
-        type: 'input',
-        name: 'message',
-        message: '请输入commit内容',
-        validate: (input) => {
-          if (input.length > 0) {
-            return true;
-          }
-          return 'commit内容不得为空';
-        },
-      },
-      {
-        type: 'input',
-        name: 'scope',
-        message: '请输入本次commit涉及的模块名,如果无模块名请直接回车~',
-        default: '',
-      },
-    ];
   }
 }
 
