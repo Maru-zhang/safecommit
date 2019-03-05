@@ -83,8 +83,8 @@ class SwiftProvider extends Provider {
         });
         // 截取错误代码片段
         cutfilelines(errorfile, parseInt(errorLine, 0), parseInt(errorCharacter, 0), errorContent);
-        console.log(`SwiftLint发现${warningCount + errorCount}处违法规则！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交`.red);
-        console.log('SwiftLint所采用的具体规则请移步: https://github.com/github/swift-style-guide'.red);
+        console.log(`SwiftLint发现${warningCount + errorCount}处违法代码！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交`.grey);
+        console.log('SwiftLint所采用的具体规则请移步: https://github.com/github/swift-style-guide'.grey);
         process.exit(1);
       });
     });
