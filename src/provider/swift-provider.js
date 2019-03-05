@@ -64,7 +64,7 @@ class SwiftProvider extends Provider {
         json.forEach((item) => {
           if (item.severity === 'Warning') {
             if (errorContent === '') {
-              errorContent += `Reason:  ${item.reason}\n`;
+              errorContent += `📌  Reason:  ${item.reason}\n`;
               errorfile = `${item.file}`;
               errorLine = `${item.line}`;
               errorCharacter = `${item.character}`;
@@ -72,7 +72,7 @@ class SwiftProvider extends Provider {
             warningCount += 1;
           } else {
             if (errorContent === '') {
-              errorContent += `Reason:  ${item.reason}\n`;
+              errorContent += `📌  Reason:  ${item.reason}\n`;
               errorfile = `${item.file}`;
               errorLine = `${item.line}`;
               errorCharacter = `${item.character}`;
@@ -83,8 +83,8 @@ class SwiftProvider extends Provider {
         console.log(errorfile.red);
         // 截取错误代码片段
         cutfilelines(errorfile, parseInt(errorLine, 0), parseInt(errorCharacter, 0), errorContent);
-        console.log(`SwiftLint found ${warningCount} warnings, ${errorCount} errors. Please fix them and try 'git sc' again.`.red);
-        console.log('您的提交内容不规范,请修改之后提交，具体规则请移步: https://github.com/github/swift-style-guide'.red);
+        console.log(`SwiftLint发现${warningCount + errorCount}处违法规则！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交`.red);
+        console.log('SwiftLint所采用的具体规则请移步: https://github.com/github/swift-style-guide'.red);
         process.exit(1);
       });
     });
@@ -139,7 +139,6 @@ class SwiftProvider extends Provider {
       'force_unwrapping',
       'force_try',
       'vertical_whitespace_closing_braces',
-      'vertical_whitespace_opening_braces',
       'vertical_whitespace_between_cases',
       'let_var_whitespace',
       'trailing_whitespace',
