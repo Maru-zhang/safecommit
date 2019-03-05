@@ -38,11 +38,12 @@ class SwiftProvider extends Provider {
       exec(lintExcution, (error, stdout) => {
         if (autoformat) {
           console.log(stdout);
+          resolve();
           return;
         }
         let json;
         try {
-          json = JSON.parse(stdout);
+          json = JSON.parse(stdout).sort((lhs, rhs) => lhs.line > rhs.line);
         } catch (e) {
           json = [];
         }
@@ -80,7 +81,6 @@ class SwiftProvider extends Provider {
             errorCount += 1;
           }
         });
-        console.log(errorfile.red);
         // 截取错误代码片段
         cutfilelines(errorfile, parseInt(errorLine, 0), parseInt(errorCharacter, 0), errorContent);
         console.log(`SwiftLint发现${warningCount + errorCount}处违法规则！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交`.red);
