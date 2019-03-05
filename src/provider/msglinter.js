@@ -1,9 +1,7 @@
 const fs = require('fs');
 require('colors');
 
-function checkMessage() {
-  const msgPath = `${process.cwd()}/.git/COMMIT_EDITMSG`;
-  const msg = fs.readFileSync(msgPath, 'utf-8').trim();
+function evaluateMessage(msg) {
   const commitRE = /^(revert: )?(feat|fix|polish|docs|style|refactor|perf|test|workflow|ci|chore|types|build)(\(.+\))?: .{1,50}/;
   if (!commitRE.test(msg)) {
     let content = '=======> commit message不符合规范,请参考一下规范\n';
@@ -19,4 +17,12 @@ function checkMessage() {
   }
 }
 
-module.exports = checkMessage;
+function checkMessage() {
+  const msgPath = `${process.cwd()}/.git/COMMIT_EDITMSG`;
+  const msg = fs.readFileSync(msgPath, 'utf-8').trim();
+  evaluateMessage(msg);
+}
+
+exports.checkMessage = checkMessage;
+exports.evaluateMessage = evaluateMessage;
+
