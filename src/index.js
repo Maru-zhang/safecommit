@@ -9,7 +9,7 @@ const { deleteFolderRecursive, checkUpdate } = require('./utils');
 const swiftProvider = require('./provider/swift-provider');
 const javaProvider = require('./provider/java-provider');
 const noneProvider = require('./provider/none-provider');
-const messageLinter = require('./provider/msglinter');
+const { checkMessage, evaluateMessage } = require('./provider/msglinter');
 
 const cwd = process.cwd();
 const home = process.env.HOME;
@@ -116,11 +116,81 @@ class Worker {
     fs.chmodSync(`${path}/commit-msg`, '777');
   }
 
+  /* 配置全局路径 */
+  setSwiftConfigPath(path) {
+    if (!path) {
+      console.error('非法地址!'.red);
+      return;
+    }
+    if (!fs.existsSync(globalSCHome)) {
+      fs.mkdirSync(globalSCHome);
+    }
+    request(path, (error, response, body) => {
+      fs.writeFileSync(`${globalSCHome}/.swiftlint.yml`, body);
+      console.log('全局配置更新成功~'.green);
+    });
+  }
+
+  /* 如果版本升级，那么需要更新配置 */
+  updateConfigIfNeed() {
+    if (!this.version) { return; }
+    nconf.argv().env().file({ file: scLocalConfig });
+    const localVersion = nconf.get('version');
+    if (!localVersion || localVersion !== this.version) {
+      nconf.set('version', this.version);
+      nconf.save();
+      this.didUpdate = true;
+    }
+  }
+
+  /* eslint-disable camelcase */
+  async run_before_commit() {
+    await this.excuteLint();
+    checkMessage();
+  }
+
+  /* cli的入口 */
+  async run(inputMsg = null) {
+    await checkUpdate();
+    // 检查当前所在的目录是否为Git目录
+    if (!fs.existsSync(gitHome)) {
+      console.error('当前目录非Git目录或者非Git根目录，请切换目录再试~'.red);
+      return;
+    }
+    this.createGlobalDirIfneed();
+    await this.createLocalDirIfneed();
+    this.buryHooks();
+    this.updateConfigIfNeed();
+    await this.excuteLint();
+    let execution;
+    if (inputMsg) {
+      execution = `git commit -m '${inputMsg}'`;
+      evaluateMessage(inputMsg);
+    } else {
+      const answers = await inquirer.prompt(this.buildCommitQuestion());
+      const { message, scope, type } = answers;
+      if (scope.length !== 0) {
+        execution = `git commit -m '${type}: [${scope}] ${message}'`;
+      } else {
+        execution = `git commit -m '${type}: ${message}'`;
+      }
+    }
+    const handler = (error, stdout, stderr) => {
+      if (error) {
+        console.log(stderr.red);
+        console.log(stdout.red);
+      } else {
+        console.log(stdout.gray);
+      }
+    };
+    exec(`${execution} --no-verify`, handler);
+  }
+
   buildCommitQuestion() {
     return [
       {
         type: 'list',
-        name: 'commit-type',
+        name: 'type',
         message: '请选择你所要提交的commit类型',
         choices: [
           {
@@ -166,78 +236,11 @@ class Worker {
       },
       {
         type: 'input',
-        name: 'module',
+        name: 'scope',
         message: '请输入本次commit涉及的模块名,如果无模块名请直接回车~',
         default: '',
       },
     ];
-  }
-
-  /* 配置全局路径 */
-  setSwiftConfigPath(path) {
-    if (!path) {
-      console.error('非法地址!'.red);
-      return;
-    }
-    if (!fs.existsSync(globalSCHome)) {
-      fs.mkdirSync(globalSCHome);
-    }
-    request(path, (error, response, body) => {
-      fs.writeFileSync(`${globalSCHome}/.swiftlint.yml`, body);
-      console.log('全局配置更新成功~'.green);
-    });
-  }
-
-  /* 如果版本升级，那么需要更新配置 */
-  updateConfigIfNeed() {
-    if (!this.version) { return; }
-    nconf.argv().env().file({ file: scLocalConfig });
-    const localVersion = nconf.get('version');
-    if (!localVersion || localVersion !== this.version) {
-      nconf.set('version', this.version);
-      nconf.save();
-      this.didUpdate = true;
-    }
-  }
-
-  /* eslint-disable camelcase */
-  async run_before_commit() {
-    await this.excuteLint();
-    messageLinter();
-  }
-
-  /* cli的入口 */
-  async run() {
-    await checkUpdate();
-    // 检查当前所在的目录是否为Git目录
-    if (!fs.existsSync(gitHome)) {
-      console.error('当前目录非Git目录或者非Git根目录，请切换目录再试~'.red);
-      return;
-    }
-    this.createGlobalDirIfneed();
-    await this.createLocalDirIfneed();
-    this.buryHooks();
-    this.updateConfigIfNeed();
-    await this.excuteLint();
-    const answers = await inquirer.prompt(this.buildCommitQuestion());
-    const { module } = answers;
-    const { message } = answers;
-    const type = answers['commit-type'];
-    const handler = (error, stdout, stderr) => {
-      if (error) {
-        console.log(stderr.red);
-        console.log(stdout.red);
-      } else {
-        console.log(stdout.gray);
-      }
-    };
-    let execution;
-    if (module.length !== 0) {
-      execution = `git commit -m '${type}: [${module}] ${message}'`;
-    } else {
-      execution = `git commit -m '${type}: ${message}'`;
-    }
-    exec(`${execution} --no-verify`, handler);
   }
 }
 
