@@ -4,7 +4,9 @@ class provider {
 
   lint() {}
 
-  format() {}
+  format() {
+    console.log('当前Linter没有提供自动格式化工具!');
+  }
 
   didUpdate() {}
 }

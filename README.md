@@ -101,6 +101,19 @@ git sc --swift-config <https://example/swiftlint.yml>
 git sc -m this is a message'
 ```
 
+
+### 4.自动格式化
+
+如果您所使用的`lint`工具支持自动格式化，那么您可以使用以下的指令来进行自动格式化。
+
+```
+git sc -a
+```
+或者
+```
+git sc --auto-format
+```
+
 ### 5. 常见问题
 
 #### 1. 无法找到最新的版本号
