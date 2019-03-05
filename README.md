@@ -80,7 +80,7 @@ git sc -s
 git sc --reset
 ```
 
-####  2.配置全局文件
+#### 2.配置全局文件
 
 > 如果你希望使用团队统一的配置，将配置文件保存在远程Git仓库中，然后通过下面的命令进行全局配置。
 > 配置完成之后，所有的Swift工程都将应用该配置，除非该工程本地存在`.swiftlint.yml`文件。
@@ -91,6 +91,14 @@ git sc -c <https://example/swiftlint.yml>
 或者
 ```
 git sc --swift-config <https://example/swiftlint.yml>
+```
+
+#### 3.Git镜像
+
+如果您还是更习惯于通过类似`git commit -m 'this is a message'`的方式来提交代码，那么我们也提供了`Git`的镜像功能。
+
+```
+git sc -m this is a message'
 ```
 
 ### 5. 常见问题
