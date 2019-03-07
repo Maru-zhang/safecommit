@@ -47,23 +47,23 @@ npm install safecommit -g
 
 1. 选择当前仓库的语言环境
 
-![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/demo-1.png)
+![](https://assets.souche.com/assets/sccimg/safecommit/demo-1.png)
 
 2. 如果存在违反lint的代码，那么根据不同的语言环境将会输出不同的提示
 
-![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/demo-2.png)
+![](https://assets.souche.com/assets/sccimg/safecommit/demo-2.png)
 
 3. 代码都符合规范，那么会提示本次提交的相关信息
 
-![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/demo-3.png)
+![](https://assets.souche.com/assets/sccimg/safecommit/demo-3.png)
 
 4. 最后提交成功
 
-![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/demo-4.png)
+![](https://assets.souche.com/assets/sccimg/safecommit/demo-4.png)
  
  > 注意：如果您习惯使用SourceTree等GUI工具，那么请您在您的项目中至少第一次使用`git sc`进行提交，此后的所有操作都可以在您的GUI工具中进行。
 
- ![](https://git.souche-inc.com/destiny/safecommit/raw/master/screenshots/gui-report.png)
+ ![](https://assets.souche.com/assets/sccimg/safecommit/gui-report.png)
 
 
 ### 4. 进阶使用
