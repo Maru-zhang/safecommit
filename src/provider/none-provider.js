@@ -6,6 +6,10 @@ class NoneProvider extends Provider {
   }
 
   lint() {}
+
+  desc() {
+    return '不使用任何lint工具';
+  }
 }
 
 module.exports = new NoneProvider();

@@ -49,7 +49,7 @@ class Worker {
           type: 'rawlist',
           name: 'language',
           message: '请选择当前项目所使用的语言',
-          choices: this.providers.map(x => x.languageName()),
+          choices: this.providers.map(x => x.chooiceItem()),
         },
       ];
       inquirer.prompt(questions).then((answers) => {

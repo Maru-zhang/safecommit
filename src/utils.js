@@ -51,7 +51,10 @@ async function checkUpdate() {
   let update = null;
   try {
     const pkg = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf8'));
-    update = await checkForUpdate(pkg);
+    update = await checkForUpdate(pkg, {
+      interval: 3600000 * 3,
+      distTag: 'latest',
+    });
   } catch (error) {
     update = false;
   }
