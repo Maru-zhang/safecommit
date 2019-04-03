@@ -63,6 +63,11 @@ async function checkUpdate() {
   }
 }
 
+function jsUcfirst(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.cutfilelines = cutfilelines;
 exports.checkUpdate = checkUpdate;
+exports.jsUcfirst = jsUcfirst;

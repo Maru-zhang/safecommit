@@ -5,7 +5,7 @@ const fs = require('fs');
 const nconf = require('nconf');
 const inquirer = require('inquirer');
 const request = require('request');
-const { deleteFolderRecursive, checkUpdate } = require('./utils');
+const { deleteFolderRecursive, checkUpdate, jsUcfirst } = require('./utils');
 const { commitQuestion } = require('./datasource/commitds');
 const { Strategy } = require('./provider/strategy');
 const swiftProvider = require('./provider/swift-provider');
@@ -82,7 +82,7 @@ class Worker {
   findSuitableLinter() {
     nconf.argv().env().file({ file: scLocalConfig });
     const language = nconf.get('language');
-    const provider = this.providers.filter(x => x.languageName() === language);
+    const provider = this.providers.filter(x => x.languageName() === jsUcfirst(language));
     if (provider.length === 0) {
       console.log('没有发现可用的lint'.red);
       return null;

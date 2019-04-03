@@ -10,7 +10,7 @@ const globalConfigPath = `${process.env.HOME}/.safecommit/.swiftlint.yml`;
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["languageName", "lint", "genergateRule"] }] */
 class SwiftProvider extends Provider {
   languageName() {
-    return 'swift';
+    return 'Swift';
   }
 
   lint(autoformat = false) {
