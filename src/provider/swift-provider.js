@@ -52,7 +52,7 @@ class SwiftProvider extends Provider {
           resolve();
           return;
         }
-        const reducer = (result, x) => `${result}${x.file}:${x.line}:${x.character}:${x.reason}\n`;
+        const reducer = (result, x) => `${result}${x.file}:${x.line}:${x.character} ===> [rule: ${x.rule_id}] ${x.reason}\n`;
         const content = `${json.reduce(reducer, '').replace(/\n$/, '').yellow}`;
         console.log(content);
         // 定位错误
@@ -83,7 +83,7 @@ class SwiftProvider extends Provider {
         });
         // 截取错误代码片段
         cutfilelines(errorfile, parseInt(errorLine, 0), parseInt(errorCharacter, 0), errorContent);
-        console.log(`SwiftLint发现${warningCount + errorCount}处违法代码！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交`.grey);
+        console.log(`SwiftLint发现${warningCount + errorCount}处违法代码！请手动修改或者尝试使用"git sc -a"自动格式化，修改完成之后再提交。或者你也可以添加控制注释"// swiftlint:disable <rule1> [<rule2> <rule3>...]"来忽略该规则`.grey);
         console.log('SwiftLint所采用的具体规则请移步: https://github.com/github/swift-style-guide'.grey);
         process.exit(1);
       });
