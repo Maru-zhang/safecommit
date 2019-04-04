@@ -82,7 +82,7 @@ class Worker {
   findSuitableLinter() {
     nconf.argv().env().file({ file: scLocalConfig });
     const language = nconf.get('language');
-    const provider = this.providers.filter(x => x.languageName() === jsUcfirst(language));
+    const provider = this.providers.filter(x => x.chooiceItem().startsWith(jsUcfirst(language)));
     if (provider.length === 0) {
       console.log('没有发现可用的lint'.red);
       return null;
