@@ -2,7 +2,7 @@ const fs = require('fs');
 require('colors');
 
 function evaluateMessage(msg) {
-  const commitRE = /^(revert: )?(feat|fix|polish|docs|style|refactor|perf|test|workflow|ci|chore|types|build)(\(.+\))?: .{1,50}/;
+  const commitRE = /(Revert.{1,50})|(Merge.{1,50})|(^(revert: )?(feat|fix|polish|docs|style|refactor|perf|test|workflow|ci|chore|types|build)(\(.+\))?: .{1,50})/;
   if (!commitRE.test(msg)) {
     let content = '=======> commit message不符合规范,请参考一下规范\n';
     content += 'feat: 新功能（feature）\n';
