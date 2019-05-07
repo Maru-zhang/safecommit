@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { exec } = require('child_process');
 const checkForUpdate = require('update-check');
 const ReadLineSync = require('./readline-sync');
 require('colors');
@@ -31,6 +32,7 @@ function cutfilelines(file, startline, character, reason) {
       if (isThisLine) {
         content += `> ${index} | ${theline}\n`.grey;
         const spacelegth = `${index}`.length + 5 + character;
+        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < spacelegth - 1; i++) {
           content += ' ';
         }
@@ -46,6 +48,22 @@ function cutfilelines(file, startline, character, reason) {
   liner.close();
 }
 
+async function cliIsInstalled(name) {
+  return new Promise((resolve) => {
+    exec(`which ${name}`, (error, stdout) => {
+      if (error) {
+        resolve(false);
+        return;
+      }
+      if (stdout.includes('not found')) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+
 // 检查版本并且更新提示
 async function checkUpdate() {
   let update = null;
@@ -59,7 +77,7 @@ async function checkUpdate() {
     update = false;
   }
   if (update) {
-    console.log(`当前的最新版本为【${update.latest}】，为了更好的体验我们建议您升级版本!`.yellow);
+    console.log(`当前的最新版本为【${update.latest}】，为了更好的体验我们建议您升级版本！(npm update -g safecommit)`.yellow);
   }
 }
 
@@ -71,3 +89,4 @@ exports.deleteFolderRecursive = deleteFolderRecursive;
 exports.cutfilelines = cutfilelines;
 exports.checkUpdate = checkUpdate;
 exports.jsUcfirst = jsUcfirst;
+exports.cliIsInstalled = cliIsInstalled;
