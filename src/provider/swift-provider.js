@@ -31,7 +31,7 @@ class SwiftProvider extends Provider {
     let lintExcution = '#! /bin/bash\n';
     lintExcution += 'temp_file=$(mktemp)\n';
     lintExcution += 'git ls-files -m  | grep ".swift$" > ${temp_file}\n';
-    lintExcution += 'git diff --name-only --cached  | grep ".swift$" >> ${temp_file}\n';
+    lintExcution += 'git diff --name-only --cached --diff-filter=AM | grep ".swift$" >> ${temp_file}\n';
     lintExcution += 'counter=0\n';
     lintExcution += 'for f in `sort ${temp_file} | uniq`\n';
     lintExcution += 'do\n';
