@@ -1,6 +1,6 @@
 {
   "name": "safecommit",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "用于安全使用git提交的拓展命令",
   "main": "./src/index.js",
   "scripts": {

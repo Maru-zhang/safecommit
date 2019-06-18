@@ -24,6 +24,10 @@ const commitQuestion = [
         value: 'refactor',
       },
       {
+        name: 'build: 构建编译相关的改动',
+        value: 'build',
+      },
+      {
         name: 'chore: bump version to [版本号]',
         value: 'chore',
       },

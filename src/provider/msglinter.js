@@ -10,6 +10,7 @@ function evaluateMessage(msg) {
     content += 'docs: 更新文档\n';
     content += 'refactor: 重构（即不是新增功能，也不是修改bug的代码变动）\n';
     content += 'chore: bump version to ${版本号}\n';
+    content += 'chore: 构建编译相关的改动\n';
     content += 'test: 增加测试\n';
     content += 'tyle: 格式变更（不影响代码运行的变动)';
     console.log(content.red);
